@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon Fire Effect</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: black;
+    }
+
+    canvas {
+        display: block;
+    }
+</style>
+</head>
+<body>
+<canvas id="dragonFireCanvas"></canvas>
+
+<script>
+    var canvas = document.getElementById("dragonFireCanvas");
+    var ctx = canvas.getContext("2d");
+
+    var width = canvas.width = window.innerWidth;
+    var height = canvas.height = window.innerHeight;
+
+    var particles = [];
+
+    function Particle(x, y, speedX, speedY, size, color) {
+        this.x = x;
+        this.y = y;
+        this.speedX = speedX;
+        this.speedY = speedY;
+        this.size = size;
+        this.color = color;
+    }
+
+    Particle.prototype.update = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.size -= 0.1;
+    };
+
+    Particle.prototype.draw = function() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    };
+
+    function createParticle() {
+        var x = width / 2;
+        var y = height - 20;
+        var speedX = Math.random() * 4 - 2;
+        var speedY = Math.random() * -6 - 1;
+        var size = Math.random() * 10 + 3;
+        var color = 'rgb(' + (Math.floor(Math.random() * 50) + 200) + ', ' + (Math.floor(Math.random() * 100) + 50) + ', 0)';
+        particles.push(new Particle(x, y, speedX, speedY, size, color));
+    }
+
+    function updateParticles() {
+        for (var i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            if (particles[i].size <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+    }
+
+    function renderParticles() {
+        ctx.clearRect(0, 0, width, height);
+        for (var i = 0; i < particles.length; i++) {
+            particles[i].draw();
+        }
+    }
+
+    function loop() {
+        createParticle();
+        updateParticles();
+        renderParticles();
+        requestAnimationFrame(loop);
+    }
+
+    loop();
+</script>
+
+</body>
+</html>
